@@ -9,7 +9,7 @@ public class game_manager : MonoBehaviour
     public enum gameState
     {
         invalid,
-        mainMenu,
+        titleScreen,
         menu,
         minigame,
         coreLoop,
@@ -26,7 +26,8 @@ public class game_manager : MonoBehaviour
     void Start()
     {
         inst = this;
-        changeState(gameState.coreLoop);
+        DontDestroyOnLoad(this);
+        changeState(gameState.titleScreen);
     }
 
     // Update is called once per frame
@@ -35,6 +36,10 @@ public class game_manager : MonoBehaviour
         
     }
 
+    public void startOfficeLoop()
+    {
+        changeState(gameState.coreLoop);
+    }
     /// <summary>
     /// go from one state to another
     /// a state is like what you can do like the core gameplay loop area vs the main menu
@@ -42,6 +47,7 @@ public class game_manager : MonoBehaviour
     /// <param name="target">the type of state to go</param>
     void changeState(gameState target)
     {
+        ui_base.inst.changeState(target);
         switch(target)
         {
             case gameState.coreLoop:

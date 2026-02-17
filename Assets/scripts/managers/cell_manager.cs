@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+// using System.Numerics;
 using JetBrains.Annotations;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -16,6 +17,7 @@ public class cell_manager : MonoBehaviour
     public Dictionary<Vector2, cell> cells = new Dictionary<Vector2, cell>();
     public List<LPRM> lprms = new List<LPRM>();
     [SerializeField] private GameObject cell_actor_prefab;
+    
 
 
     private bool tickLock = false;
@@ -32,7 +34,10 @@ public class cell_manager : MonoBehaviour
     void Update()
     {
         kounter += Time.deltaTime;
-
+        foreach(cell i in cells.Values)
+        {
+            i.update();
+        }
         if(stats_manager.inst.tps > 0)
         {
             if(kounter % (1f/stats_manager.inst.tps) < 0.02)
@@ -54,6 +59,7 @@ public class cell_manager : MonoBehaviour
 
     void core_tick()
     {
+        // print("tick");
         float a = 0f;
         foreach (LPRM i in lprms)
         {
@@ -64,6 +70,7 @@ public class cell_manager : MonoBehaviour
         {
             i.tick();
             spread_cell_n(i.pos);
+            // print(i.current_n_gen());
         }
         float b = 0f;
         foreach (LPRM i in lprms)
@@ -260,12 +267,20 @@ public class cell_manager : MonoBehaviour
 
         #region // other
         
-        var center_pos = (rad + 1)/2f * Vector2.one;
+        var core = GameObject.FindWithTag(stats_manager.tags.coreHolder);
+        Vector2 center_pos = myMath.toVec2(core.GetComponent<RectTransform>().position) ;//((rad + 1)/2f * Vector2.one);
         foreach(cell i in cells.Values)
         {
             var cam = GameObject.FindWithTag(stats_manager.tags.cam).GetComponent<Camera>();
-            var temp = Instantiate(cell_actor_prefab,GameObject.FindWithTag(stats_manager.tags.coreHolder).transform);
-            temp.transform.position = cam.WorldToScreenPoint(myMath.toVec3(cell_actor_prefab.GetComponent<RectTransform>().rect.width * (i.pos - center_pos)));
+            var temp = Instantiate(cell_actor_prefab,core.transform);
+            Vector3 pos = myMath.toVec3(i.pos);
+            pos += myMath.toVec3(Vector2.one * .5f);
+            pos.x *= core.GetComponent<RectTransform>().rect.width/(2f+stats_manager.inst.core_rad);
+            pos.y *= core.GetComponent<RectTransform>().rect.height/(2f+stats_manager.inst.core_rad);
+            pos += myMath.toVec3(center_pos);
+            pos -= new Vector3(core.GetComponent<RectTransform>().rect.width,core.GetComponent<RectTransform>().rect.height)/2f;
+            temp.transform.position = pos;
+            
             temp.GetComponent<cell_actor_base>().setCell(i);
             
         }

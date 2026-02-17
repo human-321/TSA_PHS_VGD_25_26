@@ -24,20 +24,23 @@ public class cell
     public readonly float i_to_xe_decay_rate  = 0.5f;   // percent, how fast iodine decays to xenon
     public readonly float xe_to_n_decay_rate  = 0.67f;  // percent, how fast xenon decays to neutrons
     public readonly float xe_burnoff_rate     = 0.213f; // percent, how much xenon naturally burns away
-    public readonly float base_n_gen          = 0.9f;   // how much n gets made with fuel ignoring the i->xe->n thing
-    public readonly float base_fuel_burn_rate = 0.05f;  // how much fuel gets burned per second
-    public readonly float fuel_to_heat_rate = 0.01f;
-    public readonly float water_damp_fire_rate = .8f;
+    public readonly float base_n_gen          = .9f;   // how much n gets made with fuel ignoring the i->xe->n thing
+    public readonly float base_fuel_burn_rate = 0.0201f;  // how much fuel gets burned per second
+    public readonly float fuel_to_heat_rate = 0.03f;
+    public readonly float water_damp_fire_rate = .1f;
+    public readonly float water_burnoff_rate = .005f;
+    public readonly float water_update_rate = .8f;
 
     public readonly float n_to_power = 1f; // idk about this one champ
     
     // kounters
-    public float kounter       = 0f;
-    public float last_kounter  = 0f;
+    public  float kounter       = 0f;
+    public  float last_kounter  = 0f;
     private float fuel_to_n_kounter  = 0f;
     private float i_to_xe_kounter    = 0f;
     private float xe_to_n_kounter    = 0f;
     private float xe_burnoff_kounter = 0f;
+    private float water_calc_kounter = 0f;
 
     public float last_n_gen    = 0f; // how fast n was being made last frame
     public int   last_n_amount = 0;
@@ -62,7 +65,7 @@ public class cell
     // in n/s calculates the current production rate via a formula
     public float current_n_gen()
     {
-        return base_n_gen * water_affect(water) * rod_insertion * 1f/(stats_manager.inst.tps > 0? stats_manager.inst.tps : 1);
+        return base_n_gen * water_affect(water) * rod_insertion;// * 1f/(stats_manager.inst.tps > 0? stats_manager.inst.tps : 1);
     }
 
     public float calc_power_gen()
@@ -72,7 +75,7 @@ public class cell
 
     private void convert_fuel_to_n()
     {
-
+        
         // the thing below is modulo %
         if (fuel_to_n_kounter >= 1f/current_n_gen())
         {
@@ -80,7 +83,8 @@ public class cell
             if (fuel > 0f)
             {
                 n_amount += 1;
-                fuel = Mathf.Max(0f,fuel - (base_fuel_burn_rate * current_n_gen()/base_n_gen * Time.deltaTime)); // take fuel away
+                // take fuel away
+                fuel = Mathf.Max(0f,fuel - (base_fuel_burn_rate));
                 heat += fuel_to_heat_affect(heat);
             }
 
@@ -118,25 +122,42 @@ public class cell
         }
     }
 
+    private void perform_water_loop()
+    {
+        if(water_calc_kounter >= 1f/water_update_rate)
+        {
+            water_calc_kounter = 0f;
+            water = Mathf.Max(0f,water - water_burnoff_rate);
+            if(water > 0f) heat = Mathf.Max(0f,heat - heat*water_damp_fire_rate);
+        }
+    }
     /// <summary>
-    /// the frame to frame operations of the cell
+    /// the tick to tick operations of the cell
     /// </summary>
     public void tick()
     {
         last_n_amount = n_amount;
+
+        last_n_gen = current_n_gen();
+        convert_fuel_to_n(); 
+        perform_i_xe_loop();
+        perform_water_loop();
+  
+    }
+
+    /// <summary>
+    /// frame to frame operations of the ccell
+    /// </summary>
+    public void update()
+    {
         last_kounter = kounter;
         kounter += Time.deltaTime;
         fuel_to_n_kounter += Time.deltaTime;
         i_to_xe_kounter += Time.deltaTime;
         xe_to_n_kounter += Time.deltaTime;
         xe_burnoff_kounter += Time.deltaTime;
-        last_n_gen = current_n_gen();
-        convert_fuel_to_n(); 
-        perform_i_xe_loop();
-        
-        
+        water_calc_kounter += Time.deltaTime;
     }
-
 
     public cell() { }
     public cell(Vector2 position)
