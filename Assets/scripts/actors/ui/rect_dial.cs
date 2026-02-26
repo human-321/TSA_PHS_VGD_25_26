@@ -20,7 +20,7 @@ public class rect_dial : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        width = transform.Find("face").GetComponent<RectTransform>().rect.width;
+        width  = transform.Find("face").GetComponent<RectTransform>().rect.width;
         height = transform.Find("face").GetComponent<RectTransform>().rect.height;
         tick_25.transform.position =  determine_pos(tick_25.GetComponent<RectTransform>(),.25f);
         tick_50.transform.position =  determine_pos(tick_50.GetComponent<RectTransform>(),.50f);

@@ -38,10 +38,11 @@ public class cell_editor : MonoBehaviour
     {
         return $@"
 cell editor
-position: {myMath.toVec2Int(c.pos)}
-fuel: {myMath.glamFloatDisplay(c.fuel)*100}%
-heat: {myMath.glamFloatDisplay(c.heat*100)}%
-water: {myMath.glamFloatDisplay(c.water)*100}%
+position: {myMath.glamVec2Display(myMath.toVec2Int(c.pos))}
+rod insertion: {myMath.glamFloatDisplay(c.rod_insertion)}%
+fuel: {myMath.glamFloatDisplay(c.fuel)}%
+heat: {myMath.glamFloatDisplay(c.heat)}%
+water: {myMath.glamFloatDisplay(c.water)}%
 neutrons: {c.n_amount}
 iodine: {c.i_amount}
 xenon: {c.xe_amount}
@@ -52,6 +53,7 @@ xenon: {c.xe_amount}
         return $@"
 cell editor
 position: NA
+rod insertion: NA
 fuel: NA
 heat: NA
 water: NA

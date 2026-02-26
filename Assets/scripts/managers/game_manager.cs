@@ -4,16 +4,20 @@ using System.Runtime.Serialization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum gameState
+{
+    invalid,
+    titleScreen,
+    menu,
+    minigame,
+    coreLoop,
+}
+
 public class game_manager : MonoBehaviour
 {
-    public enum gameState
-    {
-        invalid,
-        titleScreen,
-        menu,
-        minigame,
-        coreLoop,
-    }
+
+
+    
 
     public static game_manager inst;
 
@@ -38,7 +42,7 @@ public class game_manager : MonoBehaviour
 
     public void startOfficeLoop()
     {
-        changeState(gameState.coreLoop);
+        startDay(0);
     }
     /// <summary>
     /// go from one state to another
@@ -62,5 +66,11 @@ public class game_manager : MonoBehaviour
             break;
         }
         state = target;
+    }
+
+    void startDay(int day)
+    {
+        stats_manager.inst.startDay(day);
+        changeState(gameState.coreLoop);
     }
 }
