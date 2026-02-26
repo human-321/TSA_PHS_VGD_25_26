@@ -14,8 +14,8 @@ public class cell
     // main things , these are what differentiates the cells from each other
     public float fuel          = 1f; // percent
     public float heat          = .2f; // percent
-    public float rod_insertion = 1f; // percent, istg no jokes
-    public float water         = .5f; // percent, used to cool
+    public float rod_insertion = .8f; // percent, istg no jokes
+    public float water         = .75f; // percent, used to cool
     public int   n_amount      = 0;  // number of neutrons
     public int   xe_amount     = 10; // number of xenon atoms
     public int   i_amount      = 10; // number of iodine atoms
@@ -24,7 +24,7 @@ public class cell
     public readonly float i_to_xe_decay_rate  = 0.5f;   // percent, how fast iodine decays to xenon
     public readonly float xe_to_n_decay_rate  = 0.67f;  // percent, how fast xenon decays to neutrons
     public readonly float xe_burnoff_rate     = 0.213f; // percent, how much xenon naturally burns away
-    public readonly float base_n_gen          = .9f;   // how much n gets made with fuel ignoring the i->xe->n thing
+    public readonly float base_n_gen          = .9917f;   // how much n gets made with fuel ignoring the i->xe->n thing
     public readonly float base_fuel_burn_rate = 0.0201f;  // how much fuel gets burned per second
     public readonly float fuel_to_heat_rate = 0.03f;
     public readonly float water_damp_fire_rate = .1f;
@@ -190,6 +190,17 @@ public class LPRM
         pow /= cells.Count;
 
         return pow;
+    }
+    public float avg_heat()
+    {
+        float heat = 0f;
+        foreach(cell i in cells)
+        {
+            if(i != null) {heat += i.heat;}
+        }
+        heat /= cells.Count;
+
+        return heat;
     }
     // public float change_in_power()
     // {

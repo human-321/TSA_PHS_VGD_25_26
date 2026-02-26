@@ -7,6 +7,8 @@ using JetBrains.Annotations;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using UnityEditor.Analytics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -21,6 +23,7 @@ public class cell_manager : MonoBehaviour
 
 
     private bool tickLock = false;
+    private float power_drain_kounter = 0f;
 
     // private float last_pow = 0f;
 
@@ -34,6 +37,7 @@ public class cell_manager : MonoBehaviour
     void Update()
     {
         kounter += Time.deltaTime;
+        power_drain_kounter += Time.deltaTime;
         foreach(cell i in cells.Values)
         {
             i.update();
@@ -60,6 +64,7 @@ public class cell_manager : MonoBehaviour
     void core_tick()
     {
         // print("tick");
+        float temp = 0f;
         float a = 0f;
         foreach (LPRM i in lprms)
         {
@@ -76,8 +81,23 @@ public class cell_manager : MonoBehaviour
         foreach (LPRM i in lprms)
         {
             b += i.avg_power();
+            temp += i.avg_heat();
         }
-        if(b-a > 0f) {stats_manager.inst.power += b-a;}
+        if(b-a > 0f) {
+            stats_manager.inst.power += b-a;
+
+        }
+        if(power_drain_kounter > 1f/stats_manager.inst.power_drain_rate)
+        {
+            power_drain_kounter = 0f;
+            if(stats_manager.inst.power > stats_manager.inst.power_drain_rate)
+            {
+                stats_manager.inst.power -= 1;
+                stats_manager.inst.power_sent += 1;
+            }
+        }
+        temp /= lprms.Count();
+        stats_manager.inst.reactor_temp = temp;
     }
 
     #region // utility
