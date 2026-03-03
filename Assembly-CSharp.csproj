@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\scripts\actors\ui\rect_dial.cs" />
+    <Compile Include="Assets\scripts\managers\ui\doohicky_ui_manager.cs" />
     <Compile Include="Assets\scripts\managers\ui\cell_editor.cs" />
     <Compile Include="Assets\scripts\managers\game_manager.cs" />
     <Compile Include="Assets\scripts\actors\cell_actor_base.cs" />
