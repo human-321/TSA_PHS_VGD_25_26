@@ -9,7 +9,7 @@ public class cell_editor : MonoBehaviour
 {
     public static cell_editor inst;
     
-    [SerializeField] public GameObject cell_editor_header;
+    [SerializeField] public GameObject cell_editor_text;
     [Header("non fields dev info")]
     [SerializeField] public GameObject current_cell_actor;
     private TextMeshProUGUI editor_header;
@@ -18,7 +18,7 @@ public class cell_editor : MonoBehaviour
     void Start()
     {
         inst = this;
-        editor_header = cell_editor_header.GetComponent<TextMeshProUGUI>();
+        editor_header = cell_editor_text.GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
@@ -36,9 +36,8 @@ public class cell_editor : MonoBehaviour
 
     string make_cell_editor_header_text(cell c)
     {
-        return $@"
-cell editor
-position: {myMath.glamVec2Display(myMath.toVec2Int(c.pos))}
+        return 
+$@"position: {myMath.glamVec2Display(myMath.toVec2Int(c.pos))}
 rod insertion: {myMath.glamFloatDisplay(c.rod_insertion)}%
 fuel: {myMath.glamFloatDisplay(c.fuel)}%
 heat: {myMath.glamFloatDisplay(c.heat)}%
@@ -50,9 +49,8 @@ xenon: {c.xe_amount}
     }
     string cell_editor_header_text_null()
     {
-        return $@"
-cell editor
-position: NA
+        return 
+$@"position: NA
 rod insertion: NA
 fuel: NA
 heat: NA

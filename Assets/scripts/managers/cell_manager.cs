@@ -36,40 +36,44 @@ public class cell_manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        kounter += Time.deltaTime;
-        power_drain_kounter += Time.deltaTime;
-        foreach(cell i in cells.Values)
+        if(game_manager.inst.state == gameState.coreLoop)
         {
-            i.update();
-        }
-        if(stats_manager.inst.tps > 0)
-        {
-            if(kounter % (1f/stats_manager.inst.tps) < 0.02)
+            kounter += Time.deltaTime;
+            power_drain_kounter += Time.deltaTime;
+            foreach(cell i in cells.Values)
             {
-                if(!tickLock) core_tick();
-                tickLock = true;
+                i.update();
+            }
+            if(stats_manager.inst.tps > 0)
+            {
+                if(kounter % (1f/stats_manager.inst.tps) < 0.02)
+                {
+                    if(!tickLock) core_tick();
+                    tickLock = true;
+                }
+                else
+                {
+                    tickLock = false;
+                }
             }
             else
             {
-                tickLock = false;
+                core_tick();
             }
         }
-        else
-        {
-            core_tick();
-        }
-        
     }
 
     void core_tick()
     {
         // print("tick");
-        float temp = 0f;
+        float thermo = 0f;
+        float water = 0f;
         float a = 0f;
         foreach (LPRM i in lprms)
         {
             i.tick();
             a += i.avg_power();
+            water += i.avg_water();
         }
         foreach (cell i in cells.Values)
         {
@@ -81,7 +85,7 @@ public class cell_manager : MonoBehaviour
         foreach (LPRM i in lprms)
         {
             b += i.avg_power();
-            temp += i.avg_heat();
+            thermo += i.avg_heat();
         }
         if(b-a > 0f) {
             stats_manager.inst.power += b-a;
@@ -96,8 +100,9 @@ public class cell_manager : MonoBehaviour
                 stats_manager.inst.power_sent += 1;
             }
         }
-        temp /= lprms.Count();
-        stats_manager.inst.reactor_temp = temp;
+        thermo /= lprms.Count();
+        stats_manager.inst.reactor_heat = thermo;
+        stats_manager.inst.water_level = water/4f;
     }
 
     #region // utility
@@ -309,6 +314,13 @@ public class cell_manager : MonoBehaviour
     
     }
 
-
+    public void delete_core()
+    {
+        foreach(Transform t in GameObject.FindWithTag(stats_manager.tags.coreHolder).transform)
+        {
+            Destroy(t.gameObject);
+        }
+        cells.Clear();
+    }
 
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using UnityEditor;
 using UnityEngine;
 
 public struct myMath
@@ -13,4 +14,6 @@ public struct myMath
     public static float      glamFloatDisplay(float x)    {return Mathf.Floor(x * 100);}
     public static string     glamVec2Display(Vector2 vec) {return $"({vec.x},{vec.y})";}
 
+    public static float      clamp(float x,float low,float high) {return Mathf.Max(Mathf.Min(x,high),low);}
+    public static int        clamp(int x,int low,int high)       {return Mathf.Max(Mathf.Min(x,high),low);}
 }

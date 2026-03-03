@@ -191,6 +191,17 @@ public class LPRM
 
         return pow;
     }
+    public float avg_water()
+    {
+        float water = 0f;
+        foreach(cell i in cells)
+        {
+            if(i != null) {water += i.water;}
+        }
+        water /= cells.Count;
+
+        return water;
+    }
     public float avg_heat()
     {
         float heat = 0f;
