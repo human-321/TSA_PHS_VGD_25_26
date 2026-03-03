@@ -8,5 +8,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/mainOffice.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/titleScreen.unity
+    guid: 0c7772c7e688eca4785f908343f42bfd
+  - enabled: 1
+    path: Assets/Scenes/dayEndScreen.unity
+    guid: fe0631b943f34a448924aaa60f25bcc6
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
